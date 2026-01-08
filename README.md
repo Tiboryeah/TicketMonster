@@ -38,11 +38,11 @@ Por seguridad, las contraseñas de la base de datos no se suben a GitHub. Debes 
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb+srv://<USUARIO>:<PASSWORD>@cluster0.tgbudpw.mongodb.net/ticket-system?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=mongodb+srv://cliente:cliente123@cluster0.tgbudpw.mongodb.net/ticket-system?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=supersecretkey123
 ```
 
-*(Nota: Sustituye `<USUARIO>` y `<PASSWORD>` por las credenciales reales de tu base de datos).*
+*(Nota: Esta conexión está configurada con un usuario de acceso restringido exclusivamente a la base de datos de TicketMonster).*
 
 ### 4. Arrancar el Proyecto
 Necesitas mantener dos terminales abiertas corriendo simultáneamente:
