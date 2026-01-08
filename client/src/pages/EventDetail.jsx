@@ -12,9 +12,29 @@ const EventDetail = () => {
     const { user } = useAuth();
     const { addToCart } = useCart();
     const [event, setEvent] = useState(null);
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    const [quantity, setQuantity] = useState(1);
+    // State to hold quantity for each ticket type: { "General": 0, "VIP": 2 }
+    const [ticketQuantities, setTicketQuantities] = useState({});
     const [added, setAdded] = useState(false);
+
+    // Initialize quantities with 0
+    useEffect(() => {
+        if (event && event.tickets) {
+            const initialQ = {};
+            event.tickets.forEach(t => initialQ[t.name] = 0);
+            setTicketQuantities(initialQ);
+        }
+    }, [event]);
+
+    const updateQuantity = (ticketName, delta, stock) => {
+        setTicketQuantities(prev => {
+            const current = prev[ticketName] || 0;
+            const newVal = Math.max(0, Math.min(stock, current + delta));
+            return { ...prev, [ticketName]: newVal };
+        });
+    };
+
+    const totalToPay = event ? event.tickets.reduce((acc, t) => acc + (t.price * (ticketQuantities[t.name] || 0)), 0) : 0;
+    const totalItems = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -30,10 +50,24 @@ const EventDetail = () => {
     }, [id]);
 
     const handleAddToCart = () => {
-        if (!selectedTicket) return;
-        addToCart(event, selectedTicket, quantity);
+        if (totalItems === 0) return;
+
+        // Add each selected ticket type to cart
+        event.tickets.forEach(t => {
+            const qty = ticketQuantities[t.name];
+            if (qty > 0) {
+                addToCart(event, t, qty);
+            }
+        });
+
         setAdded(true);
-        setTimeout(() => setAdded(false), 2000);
+        setTimeout(() => {
+            setAdded(false);
+            // Reset quantities after adding??? Maybe better to keep them or reset. Let's reset for clarity.
+            const resetQ = {};
+            event.tickets.forEach(t => resetQ[t.name] = 0);
+            setTicketQuantities(resetQ);
+        }, 1500);
     };
 
     if (!event) return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando...</div>;
@@ -91,58 +125,70 @@ const EventDetail = () => {
                             {event.tickets.map((t) => (
                                 <div
                                     key={t.name}
-                                    onClick={() => setSelectedTicket(t)}
                                     style={{
                                         padding: '20px',
                                         borderRadius: '16px',
-                                        border: `2px solid ${selectedTicket?.name === t.name ? 'var(--primary)' : 'var(--glass-border)'}`,
-                                        cursor: 'pointer',
-                                        background: selectedTicket?.name === t.name ? 'rgba(131, 58, 180, 0.1)' : 'transparent',
+                                        border: '1px solid var(--glass-border)',
+                                        background: (ticketQuantities[t.name] > 0) ? 'rgba(131, 58, 180, 0.1)' : 'rgba(255,255,255,0.02)',
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
                                         transition: '0.3s'
                                     }}
                                 >
-                                    <div>
-                                        <h4 style={{ fontSize: '18px' }}>{t.name}</h4>
-                                        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>{t.stock} disponibles</p>
+                                    <div style={{ flex: 1 }}>
+                                        <h4 style={{ fontSize: '18px', display: 'flex', justifyContent: 'space-between', marginRight: '15px' }}>
+                                            {t.name}
+                                            <span style={{ fontWeight: '800', color: 'var(--primary)' }}>${t.price}</span>
+                                        </h4>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{t.stock} disponibles</p>
                                     </div>
-                                    <span style={{ fontSize: '20px', fontWeight: '800' }}>${t.price}</span>
+
+                                    {/* Quantity Control inside the card */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0,0,0,0.3)', padding: '5px', borderRadius: '12px' }}>
+                                        <button
+                                            onClick={() => updateQuantity(t.name, -1, t.stock)}
+                                            className="glass-morphism"
+                                            style={{ width: '30px', height: '30px', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                        > - </button>
+                                        <span style={{ fontWeight: 'bold', width: '20px', textAlign: 'center' }}>{ticketQuantities[t.name] || 0}</span>
+                                        <button
+                                            onClick={() => updateQuantity(t.name, 1, t.stock)}
+                                            className="glass-morphism"
+                                            style={{ width: '30px', height: '30px', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                        > + </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
 
-                        {selectedTicket && (
-                            <>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                                    <span>Cantidad</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                        <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="glass-morphism" style={{ width: '35px', height: '35px' }}>-</button>
-                                        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{quantity}</span>
-                                        <button onClick={() => setQuantity(q => Math.min(selectedTicket.stock, q + 1))} className="glass-morphism" style={{ width: '35px', height: '35px' }}>+</button>
-                                    </div>
-                                </div>
+                        <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Total a pagar</span>
+                            <span style={{ fontSize: '32px', fontWeight: '800' }}>${totalToPay}</span>
+                        </div>
 
-                                <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                                    <span style={{ color: 'var(--text-muted)' }}>Total a pagar</span>
-                                    <span style={{ fontSize: '32px', fontWeight: '800' }}>${selectedTicket.price * quantity}</span>
-                                </div>
-
-                                <button
-                                    onClick={handleAddToCart}
-                                    disabled={added || selectedTicket.stock === 0}
-                                    className="gradient-bg"
-                                    style={{ width: '100%', padding: '18px', borderRadius: '16px', fontSize: '18px', fontWeight: 'bold' }}
-                                >
-                                    {added ? '¡Añadido al Carrito!' : selectedTicket.stock === 0 ? 'Agotado' : 'Añadir al Carrito'}
-                                </button>
-
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginTop: '20px', color: 'var(--accent)', fontSize: '14px' }}>
-                                    <ShieldCheck size={18} /> Pago Protegido & Seguro
-                                </div>
-                            </>
+                        {user ? (
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={added || totalItems === 0}
+                                className="gradient-bg"
+                                style={{ width: '100%', padding: '18px', borderRadius: '16px', fontSize: '18px', fontWeight: 'bold', opacity: totalItems === 0 ? 0.5 : 1 }}
+                            >
+                                {added ? '¡Añadido al Carrito!' : 'Añadir al Carrito'}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="glass-morphism"
+                                style={{ width: '100%', padding: '18px', borderRadius: '16px', fontSize: '18px', fontWeight: 'bold', color: 'var(--primary)', border: '1px solid var(--primary)' }}
+                            >
+                                Iniciar Sesión para Comprar
+                            </button>
                         )}
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginTop: '20px', color: 'var(--accent)', fontSize: '14px' }}>
+                            <ShieldCheck size={18} /> Pago Protegido & Seguro
+                        </div>
                     </div>
                 </motion.div>
             </div>

@@ -35,43 +35,46 @@ const Profile = () => {
                         <p style={{ color: 'var(--text-muted)' }}>Explora los próximos eventos para empezar.</p>
                     </div>
                 ) : (
-                    tickets.map((ticket) => (
-                        <motion.div
-                            key={ticket._id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="glass-morphism"
-                            style={{ display: 'flex', overflow: 'hidden' }}
-                        >
-                            <div style={{ width: '120px', background: `url(http://localhost:5000${ticket.eventId.image}) center/cover` }}></div>
-                            <div style={{ padding: '25px', flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                    <div>
-                                        <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>{ticket.eventId.title}</h3>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '14px', marginBottom: '5px' }}>
-                                            <Calendar size={14} /> {new Date(ticket.eventId.date).toLocaleDateString()}
+                    tickets.map((ticket) => {
+                        if (!ticket.eventId) return null; // Saltar tickets huérfanos
+                        return (
+                            <motion.div
+                                key={ticket._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="glass-morphism"
+                                style={{ display: 'flex', overflow: 'hidden' }}
+                            >
+                                <div style={{ width: '120px', background: `url(http://localhost:5000${ticket.eventId.image}) center/cover` }}></div>
+                                <div style={{ padding: '25px', flex: 1 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div>
+                                            <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>{ticket.eventId.title}</h3>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '14px', marginBottom: '5px' }}>
+                                                <Calendar size={14} /> {new Date(ticket.eventId.date).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '14px' }}>
+                                                <MapPin size={14} /> {ticket.eventId.location}
+                                            </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '14px' }}>
-                                            <MapPin size={14} /> {ticket.eventId.location}
+                                        <div className="gradient-bg" style={{ padding: '5px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 'bold' }}>
+                                            {ticket.ticketType}
                                         </div>
                                     </div>
-                                    <div className="gradient-bg" style={{ padding: '5px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 'bold' }}>
-                                        {ticket.ticketType}
-                                    </div>
-                                </div>
 
-                                <div style={{ borderTop: '1px dashed var(--glass-border)', marginTop: '20px', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div>
-                                        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Cantidad: {ticket.quantity}</p>
-                                        <p style={{ fontWeight: 'bold', fontSize: '18px' }}>PAGO: ${ticket.totalPrice}</p>
+                                    <div style={{ borderTop: '1px dashed var(--glass-border)', marginTop: '20px', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Cantidad: {ticket.quantity}</p>
+                                            <p style={{ fontWeight: 'bold', fontSize: '18px' }}>PAGO: ${ticket.totalPrice}</p>
+                                        </div>
+                                        <button className="glass-morphism" style={{ padding: '10px', color: 'var(--accent)' }}>
+                                            <Download size={20} />
+                                        </button>
                                     </div>
-                                    <button className="glass-morphism" style={{ padding: '10px', color: 'var(--accent)' }}>
-                                        <Download size={20} />
-                                    </button>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))
+                            </motion.div>
+                        );
+                    })
                 )}
             </div>
         </div>

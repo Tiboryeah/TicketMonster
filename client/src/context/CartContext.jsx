@@ -15,17 +15,19 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (event, ticketType, quantity) => {
-    const itemIndex = cartItems.findIndex(
-      (item) => item.event._id === event._id && item.ticketType === ticketType.name
-    );
+    setCartItems(prevItems => {
+      const itemIndex = prevItems.findIndex(
+        (item) => item.event._id === event._id && item.ticketType === ticketType.name
+      );
 
-    if (itemIndex > -1) {
-      const newItems = [...cartItems];
-      newItems[itemIndex].quantity += quantity;
-      setCartItems(newItems);
-    } else {
-      setCartItems([...cartItems, { event, ticketType: ticketType.name, price: ticketType.price, quantity }]);
-    }
+      if (itemIndex > -1) {
+        const newItems = [...prevItems];
+        newItems[itemIndex] = { ...newItems[itemIndex], quantity: newItems[itemIndex].quantity + quantity };
+        return newItems;
+      } else {
+        return [...prevItems, { event, ticketType: ticketType.name, price: ticketType.price, quantity }];
+      }
+    });
   };
 
   const removeFromCart = (eventId, ticketType) => {

@@ -28,20 +28,22 @@ const Navbar = () => {
             <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
                 <Link to="/events" className="hover-link">Explorar</Link>
 
-                <Link to="/cart" style={{ position: 'relative', display: 'flex', alignItems: 'center', color: 'var(--text-main)' }}>
-                    <ShoppingCart size={24} />
-                    {cartItems.length > 0 && (
-                        <span style={{
-                            position: 'absolute', top: '-8px', right: '-8px',
-                            background: 'var(--secondary)', color: 'white',
-                            fontSize: '10px', width: '18px', height: '18px',
-                            borderRadius: '50%', display: 'flex',
-                            justifyContent: 'center', alignItems: 'center', fontWeight: 'bold'
-                        }}>
-                            {cartItems.length}
-                        </span>
-                    )}
-                </Link>
+                {user && (
+                    <Link to="/cart" style={{ position: 'relative', display: 'flex', alignItems: 'center', color: 'var(--text-main)' }}>
+                        <ShoppingCart size={24} />
+                        {cartItems.length > 0 && (
+                            <span style={{
+                                position: 'absolute', top: '-8px', right: '-8px',
+                                background: 'var(--secondary)', color: 'white',
+                                fontSize: '10px', width: '18px', height: '18px',
+                                borderRadius: '50%', display: 'flex',
+                                justifyContent: 'center', alignItems: 'center', fontWeight: 'bold'
+                            }}>
+                                {cartItems.length}
+                            </span>
+                        )}
+                    </Link>
+                )}
 
                 {user ? (
                     <>

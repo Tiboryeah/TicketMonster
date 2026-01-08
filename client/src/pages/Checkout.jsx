@@ -14,12 +14,47 @@ const Checkout = () => {
     const [form, setForm] = useState({
         cardName: '',
         cardNumber: '',
-        expiry: '',
+        expMonth: '',
+        expYear: '',
         cvv: ''
     });
+    const [cardBrand, setCardBrand] = useState('');
+
+    const detectCardBrand = (number) => {
+        const clean = number.replace(/\s/g, '');
+        if (/^4/.test(clean)) return 'Visa';
+        if (/^5[1-5]/.test(clean) || /^2[2-7]/.test(clean)) return 'MasterCard';
+        if (/^3[47]/.test(clean)) return 'Amex';
+        if (/^6(?:011|5)/.test(clean)) return 'Discover';
+        return '';
+    };
+
+    const handleCardNumberChange = (e) => {
+        const val = e.target.value.replace(/\D/g, ''); // Solo números
+        setForm({ ...form, cardNumber: val });
+        setCardBrand(detectCardBrand(val));
+    };
 
     const handlePurchase = async (e) => {
         e.preventDefault();
+
+        // Validaciones
+        const cleanCard = form.cardNumber.replace(/\s/g, '');
+        if (!/^\d{16}$/.test(cleanCard)) {
+            alert('El número de tarjeta debe tener exactamente 16 dígitos.');
+            return;
+        }
+
+        if (!/^\d{3}$/.test(form.cvv)) {
+            alert('El CVV debe tener exactamente 3 dígitos.');
+            return;
+        }
+
+        if (!form.expMonth || !form.expYear) {
+            alert('Por favor selecciona la fecha de expiración completa.');
+            return;
+        }
+
         if (cartItems.length === 0) return;
 
         setLoading(true);
@@ -73,34 +108,60 @@ const Checkout = () => {
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <label>Número de Tarjeta</label>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <label>Número de Tarjeta</label>
+                                {cardBrand && (
+                                    <span style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '12px' }}>
+                                        {cardBrand}
+                                    </span>
+                                )}
+                            </div>
                             <input
                                 type="text"
-                                placeholder="4242 4242 4242 4242"
+                                placeholder="0000 0000 0000 0000"
+                                maxLength="16"
                                 value={form.cardNumber}
-                                onChange={(e) => setForm({ ...form, cardNumber: e.target.value })}
+                                onChange={handleCardNumberChange}
                                 required
                             />
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <label>Expira (MM/YY)</label>
-                                <input
-                                    type="text"
-                                    placeholder="12/28"
-                                    value={form.expiry}
-                                    onChange={(e) => setForm({ ...form, expiry: e.target.value })}
-                                    required
-                                />
+                                <label>Expira</label>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <select
+                                        value={form.expMonth}
+                                        onChange={(e) => setForm({ ...form, expMonth: e.target.value })}
+                                        required
+                                        style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white' }}
+                                    >
+                                        <option value="" disabled>Mes</option>
+                                        {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => (
+                                            <option key={m} value={m} style={{ color: 'black' }}>{m}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={form.expYear}
+                                        onChange={(e) => setForm({ ...form, expYear: e.target.value })}
+                                        required
+                                        style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white' }}
+                                    >
+                                        <option value="" disabled>Año</option>
+                                        {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() + i).slice(-2)).map(y => (
+                                            <option key={y} value={y} style={{ color: 'black' }}>20{y}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 <label>CVV</label>
                                 <input
                                     type="password"
-                                    placeholder="***"
+                                    placeholder="123"
+                                    maxLength="3"
                                     value={form.cvv}
-                                    onChange={(e) => setForm({ ...form, cvv: e.target.value })}
+                                    onChange={(e) => setForm({ ...form, cvv: e.target.value.replace(/\D/g, '') })} // Solo números
                                     required
                                 />
                             </div>

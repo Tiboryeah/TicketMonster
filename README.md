@@ -1,33 +1,86 @@
-# TicketSync - Sistema de Venta de Boletos
+# TicketMonster 👹🎫
+Sistema de Venta de Boletos para Eventos (Full Stack MERN)
 
-Este es un proyecto completo de sistema de boletos con roles de Cliente y Administrador.
+Este proyecto es una aplicación web completa para la gestión y venta de boletos para eventos, desarrollada con el stack **MERN** (MongoDB, Express, React, Node.js).
 
-## Tecnologías Utilizadas
-- **Frontend**: React (Vite), Framer Motion, Lucide React, Axios.
-- **Backend**: Node.js, Express, MongoDB (Mongoose), Multer, JWT.
-- **Estética**: Diseño moderno con Glassmorphism y gradientes vibrantes.
+## 🚀 Instalación y Ejecución (Cómo correrlo en otra PC)
 
-## Pasos para Levantar el Proyecto
+Sigue estos pasos EXACTOS para clonar y ejecutar el proyecto en cualquier computadora:
 
-### 1. Requisitos
-- Node.js instalado.
-- MongoDB instalado localmente o una cuenta en MongoDB Atlas.
+### 1. Clonar el repositorio
+Abre una terminal y ejecuta:
+```bash
+git clone https://github.com/Tiboryeah/TicketMonster.git
+cd TicketMonster
+```
 
-### 2. Configuración del Backend
-1. Entra a la carpeta `server`: `cd server`
-2. Instala dependencias: `npm install`
-3. Configura el archivo `.env`:
-   - Cambia `MONGODB_URI` por tu cadena de conexión (ya está configurada para MongoDB local por defecto).
-   - El secreto de JWT ya tiene un valor por defecto.
-4. (Opcional) Carga datos iniciales: `node seed.js`
-5. Inicia el servidor: `node index.js` (o usa `nodemon` si lo tienes instalado).
+### 2. Instalar Dependencias
+Debes instalar las librerías tanto del servidor (Backend) como del cliente (Frontend).
+Abre el proyecto en Visual Studio Code y usa dos terminales, o ejecuta uno por uno:
 
-### 3. Configuración el Frontend
-1. Entra a la carpeta `client`: `cd client`
-2. Instala dependencias: `npm install`
-3. Inicia el cliente: `npm run dev`
-4. Abre el navegador en la URL indicada (usualmente `http://localhost:5173`).
+**Terminal 1 (Backend):**
+```bash
+cd server
+npm install
+```
 
-## Funcionalidades Implementadas
-- **Clientes**: Registro, Login, Ver Catálogo, Detalle de Evento, Compra Simulada, Perfil con "Mis Boletos".
-- **Administrador**: Dashboard Estadístico, CRUD completo de Eventos (Crear, Editar, Eliminar, Listar), Control de Inventario y Precios por tipo de boleto.
+**Terminal 2 (Frontend):**
+```bash
+cd client
+npm install
+```
+
+### 3. Configurar Variables de Entorno (IMPORTANTE ⚠️)
+Por seguridad, las contraseñas de la base de datos no se suben a GitHub. Debes crear el archivo manualmente.
+1. Ve a la carpeta `server`.
+2. Crea un archivo nuevo llamado `.env`.
+3. Pega el siguiente contenido (Son las claves reales de la base de datos en la nube):
+
+```env
+PORT=5000
+MONGODB_URI=mongodb+srv://admin:admin@cluster0.tgbudpw.mongodb.net/ticket-system?retryWrites=true&w=majority&appName=Cluster0
+JWT_SECRET=supersecretkey123
+```
+
+*(Nota: Sin este archivo, la aplicación NO conectará a la base de datos)*.
+
+### 4. Arrancar el Proyecto
+Necesitas mantener dos terminales abiertas corriendo simultáneamente:
+
+**Terminal 1 (Backend - Servidor):**
+```bash
+cd server
+node index.js
+```
+*(Debe decir: "✅ MongoDB Connected")*
+
+**Terminal 2 (Frontend - Interfaz):**
+```bash
+cd client
+npm run dev
+```
+*(Te dará un link, ábrelo en tu navegador, usualmente http://localhost:5173/)*
+
+---
+
+## ✨ Características Principales
+
+### 👤 Usuario (Cliente)
+*   **Autenticación**: Registro y Login seguro.
+*   **Catálogo**: Búsqueda, filtros y vista de eventos "Próximos".
+*   **Compras**: Selección avanzada (varios tipos de boletos a la vez), Carrito de Compras y Pasarela de Pago simulada (detecta Visa/Mastercard, valida fechas).
+*   **Perfil**: Historial de compras ("Mis Boletos") y descarga de comprobantes.
+
+### 🛠️ Administrador (Backend)
+*   **Dashboard**: Estadísticas reales (Ventas totales, Ingresos, Compradores Únicos).
+*   **Gestión de Eventos**: Crear, Editar y Eliminar eventos con imágenes.
+*   **Control de Stock**: Inventario de boletos en tiempo real.
+*   **Reportes**: Lista de asistentes por evento.
+
+---
+
+## 🛠️ Tecnologías Usadas
+*   **Frontend**: React + Vite, Framer Motion (Animaciones), Lucide React (Iconos).
+*   **Backend**: Node.js, Express.
+*   **Base de Datos**: MongoDB Atlas (Nube).
+*   **Estilos**: CSS (Glassmorphism Design).
