@@ -38,11 +38,11 @@ Por seguridad, las contraseñas de la base de datos no se suben a GitHub. Debes 
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb+srv://admin:admin@cluster0.tgbudpw.mongodb.net/ticket-system?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=mongodb+srv://<USUARIO>:<PASSWORD>@cluster0.tgbudpw.mongodb.net/ticket-system?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=supersecretkey123
 ```
 
-*(Nota: Sin este archivo, la aplicación NO conectará a la base de datos)*.
+*(Nota: Sustituye `<USUARIO>` y `<PASSWORD>` por las credenciales reales de tu base de datos).*
 
 ### 4. Arrancar el Proyecto
 Necesitas mantener dos terminales abiertas corriendo simultáneamente:
