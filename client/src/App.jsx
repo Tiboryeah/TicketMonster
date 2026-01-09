@@ -13,6 +13,7 @@ import Success from './pages/Success';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminEventForm from './pages/AdminEventForm';
 import AdminAttendees from './pages/AdminAttendees';
+import Contact from './pages/Contact';
 
 const PrivateRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />
+                <Route path="/contact" element={<Contact />} />
 
                 <Route path="/profile" element={
                   <PrivateRoute>

@@ -27,6 +27,7 @@ const Navbar = () => {
 
             <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
                 <Link to="/events" className="hover-link">Explorar</Link>
+                <Link to="/contact" className="hover-link">Contacto</Link>
 
                 {user && (
                     <Link to="/cart" style={{ position: 'relative', display: 'flex', alignItems: 'center', color: 'var(--text-main)' }}>
