@@ -58,12 +58,20 @@ const getAttendeesByEvent = async (req, res) => {
 
 const getSalesStats = async (req, res) => {
     try {
-        const totalTickets = await Ticket.countDocuments();
+        // Sumar todos los boletos vendidos (la suma de la columna 'quantity')
+        const ticketAgg = await Ticket.aggregate([
+            { $group: { _id: null, total: { $sum: "$quantity" } } }
+        ]);
+        const totalTickets = ticketAgg[0] ? ticketAgg[0].total : 0;
+
         const totalRevenue = await Ticket.aggregate([
             { $group: { _id: null, total: { $sum: "$totalPrice" } } }
         ]);
+
         const recentSales = await Ticket.find().sort({ purchaseDate: -1 }).limit(5).populate('userId', 'name').populate('eventId', 'title');
         const uniqueBuyers = await Ticket.distinct('userId');
+
+        console.log(`[Stats] Total Tickets: ${totalTickets}, Total Revenue: ${totalRevenue[0]?.total || 0}`);
 
         res.json({
             totalTickets,

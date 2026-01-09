@@ -32,9 +32,8 @@ const Register = () => {
     const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
 
     const handlePhoneChange = (e) => {
-        const value = e.target.value;
-        // Solo permitir números
-        if (value === '' || /^[0-9\b]+$/.test(value)) {
+        const value = e.target.value.replace(/\D/g, ''); // Solo números
+        if (value.length <= 10) {
             setFormData({ ...formData, phone: value });
         }
     };
@@ -47,8 +46,8 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.phone.length < 8) {
-            setError('Por favor, ingresa un número de teléfono válido');
+        if (formData.phone.length !== 10) {
+            setError('El número de teléfono debe tener exactamente 10 dígitos');
             return;
         }
         try {
@@ -159,9 +158,10 @@ const Register = () => {
                             )}
                             <input
                                 type="text"
-                                placeholder="Número"
+                                placeholder="10 dígitos"
                                 value={formData.phone}
                                 onChange={handlePhoneChange}
+                                maxLength="10"
                                 required
                                 style={{ flex: 1 }}
                             />
