@@ -63,6 +63,25 @@ npm run dev
 
 ---
 
+## 🔄 Actualizar el Proyecto (En otra PC)
+
+Si ya tienes el proyecto en otra computadora y quieres descargar los **últimos cambios** (como el nuevo campo de teléfono o la sección de contacto), sigue estos pasos:
+
+1. Abre una terminal en la carpeta principal `TicketMonster`.
+2. Ejecuta el comando para descargar lo nuevo:
+   ```bash
+   git pull origin main
+   ```
+3. (Opcional) Si ves errores al arrancar, actualiza las librerías:
+   ```bash
+   cd client
+   npm install
+   cd ../server
+   npm install
+   ```
+
+---
+
 ## ✨ Características Principales
 
 ### 👤 Usuario (Cliente)
