@@ -97,7 +97,25 @@ const AdminDashboard = () => {
                                 </td>
                                 <td style={{ padding: '20px' }}>{event.category}</td>
                                 <td style={{ padding: '20px' }}>{new Date(event.date).toLocaleDateString()}</td>
-                                <td style={{ padding: '20px' }}>{event.tickets.reduce((acc, t) => acc + t.sold, 0)} / {event.tickets.reduce((acc, t) => acc + t.stock + t.sold, 0)}</td>
+                                <td style={{ padding: '20px' }}>
+                                    <div style={{ fontWeight: 'bold' }}>
+                                        {event.tickets.reduce((acc, t) => acc + t.sold, 0)} / {event.tickets.reduce((acc, t) => acc + (t.stock || 0) + (t.sold || 0), 0)}
+                                    </div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '5px' }}>
+                                        {event.tickets.map((t, idx) => (
+                                            <span key={idx} style={{
+                                                fontSize: '10px',
+                                                color: t.sold > 0 ? 'var(--accent)' : 'var(--text-muted)',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                padding: '2px 6px',
+                                                borderRadius: '4px',
+                                                border: t.sold > 0 ? '1px solid rgba(0, 242, 254, 0.2)' : '1px solid transparent'
+                                            }}>
+                                                {t.name}: {t.sold || 0}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </td>
                                 <td style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', gap: '10px' }}>
                                         <Link title="Ver Asistentes" to={`/admin/event/${event._id}/attendees`} className="glass-morphism" style={{ padding: '8px', color: 'var(--accent)' }}><Users size={18} /></Link>

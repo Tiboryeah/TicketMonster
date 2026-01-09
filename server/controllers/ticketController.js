@@ -49,7 +49,7 @@ const getMyTickets = async (req, res) => {
 
 const getAttendeesByEvent = async (req, res) => {
     try {
-        const tickets = await Ticket.find({ eventId: req.params.eventId }).populate('userId', 'name email');
+        const tickets = await Ticket.find({ eventId: req.params.eventId }).populate('userId', 'name email phone countryCode');
         res.json(tickets);
     } catch (error) {
         res.status(500).json({ message: error.message });
